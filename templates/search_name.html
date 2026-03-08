@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>品名あいまい検索</title>
+    <style>
+        .menu { background: #f4f4f4; padding: 10px; margin-bottom: 20px; }
+        .menu a { margin-right: 15px; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="menu">
+        <a href="/">[HOME] 品目CD検索</a>
+        <strong>品名あいまい検索</strong>
+    </div>
+
+    <h1>品名あいまい検索</h1>
+    <form method="POST">
+        キーワード：<input type="text" name="keyword" placeholder="例: ニトリル" value="{{ keyword }}">
+        <button type="submit">検索</button>
+    </form>
+
+    {% if results %}
+    <table border="1" style="margin-top: 20px;">
+        <tr><th>品目コード</th><th>品名仕様</th></tr>
+        {% for row in results %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</body>
+</html>

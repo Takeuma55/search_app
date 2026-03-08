@@ -2,55 +2,53 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>品目別購入実績集計</title>
+    <title>資材検索システム [HOME]</title>
     <style>
-        /* 装飾を捨て、Excelコピペ用の実用性に特化 */
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #000; padding: 2px 5px; }
-        th { font-weight: bold; }
-        .summary { margin-bottom: 10px; }
+        .menu { background: #f4f4f4; padding: 10px; margin-bottom: 20px; border-radius: 5px; }
+        .menu a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #007bff; }
+        .menu strong { margin-right: 15px; color: #333; }
+        table { border-collapse: collapse; margin-top: 20px; width: 100%; }
+        th { background-color: #eee; padding: 8px; }
+        td { padding: 8px; text-align: right; }
+        .total-col { background-color: #fff9e6; font-weight: bold; }
+        .year-month { text-align: center; }
     </style>
 </head>
 <body>
+    <div class="menu">
+        <strong>[HOME]</strong>
+        <a href="/">品目CD検索(毎月)</a>
+        <a href="/search_name">品名あいまい検索</a>
+    </div>
+
+    <h1>品目コード検索 (月別クロス集計)</h1>
     <form method="POST">
-        品目ＣＤ：<input type="text" name="keyword" value="{{ summary.code }}">
+        品目ＣＤ：<input type="text" name="code" value="{{ summary.code }}" placeholder="例: A804-015-8041-4">
         <button type="submit">検索</button>
     </form>
 
-    {% if summary.code %}
-    <div class="summary">
-        品目ＣＤ：{{ summary.code }} / 品名仕様：{{ summary.spec }}
-    </div>
+    {% if summary.name %}
+        <h3>品名：{{ summary.name }}</h3>
+    {% endif %}
 
-    <table>
-        <thead>
-            <tr>
-                <th>年月</th>
-                <th>購入数量/工業</th><th>購入金額/工業</th>
-                <th>購入数量/MFG</th><th>購入金額/MFG</th>
-                <th>購入数量/アクア</th><th>購入金額/アクア</th>
-                <th>購入数量/合計</th><th>購入金額/合計</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in results %}
-            <tr>
-                <td style="text-align:center">{{ row.年月 }}</td>
-                <td>{{ row.qty_kogyo }}</td><td>{{ row.amt_kogyo }}</td>
-                <td>{{ row.qty_mfg }}</td><td>{{ row.amt_mfg }}</td>
-                <td>{{ row.qty_aqua }}</td><td>{{ row.amt_aqua }}</td>
-                <td>{{ row.qty_total }}</td><td>{{ row.amt_total }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td>トータル</td>
-                <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
-                <td>{{ totals.qty }}</td><td>{{ totals.amount }}</td>
-            </tr>
-        </tfoot>
+    {% if results %}
+    <p>※このままコピーしてExcelに貼り付け可能です。</p>
+    <table border="1">
+        <tr>
+            <th>年月</th>
+            <th>工業(数)</th><th>工業(金)</th>
+            <th>MFG(数)</th><th>MFG(金)</th>
+            <th>ｱｸｱ(数)</th><th>ｱｸｱ(金)</th>
+            <th class="total-col">合計(数)</th>
+            <th class="total-col">合計(金)</th>
+        </tr>
+        {% for row in results %}
+        <tr>
+            <td class="year-month">{{ row[0] }}</td> <td>{{ row[1] }}</td><td>{{ row[2] }}</td> <td>{{ row[3] }}</td><td>{{ row[4] }}</td> <td>{{ row[5] }}</td><td>{{ row[6] }}</td> <td class="total-col">{{ row[7] }}</td> <td class="total-col">{{ row[8] }}</td> </tr>
+        {% endfor %}
     </table>
+    {% elif code %}
+    <p>該当する集計データは見つかりませんでした。</p>
     {% endif %}
 </body>
 </html>
